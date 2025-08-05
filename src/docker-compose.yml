@@ -1,0 +1,33 @@
+services:
+  mariadb:
+    # first setting the directory path
+    # then specify my own name for Dockerfile
+    build:
+      context: ./req/mariadb
+      dockerfile: Dockerfile_db
+    # tagging the image as mariadb
+    # and setting the container name
+    image: mariadb
+    container_name: mariadb
+    networks:
+      - inception
+    # changing the default directory
+    # rather than using /var/lib/mysql
+    # command is to set that path for db
+    volumes:
+      - mariadb:/var/db
+    command: --datadir=/var/db
+
+volumes:
+  mariadb:
+    name: mariadb
+    driver: local
+    external: false
+    driver_opts:
+      device: "/home/ndziadzi/data/mariadb"
+      o: bind
+      type: none
+
+
+networks:
+  inception: {}

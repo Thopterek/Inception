@@ -1,4 +1,4 @@
-DC = docker-compose -f srcs/docker-compose.yml --env-file srcs/.env
+DC = docker-compose -f src/docker-compose.yml --env-file src/.env
 
 up:
 	$(DC) up
