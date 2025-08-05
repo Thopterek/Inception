@@ -6,4 +6,4 @@ up:
 down:
 	$(DC) down
 
-.PHONY up down
+.PHONY: up down
