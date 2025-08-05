@@ -1,0 +1,7 @@
+# using the pin base image of the version
+# thats why the addition of @sha[...]
+FROM alpine@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+# for alpine using the no cache option
+# first command done after finishing run
+RUN apk add --no-cache mariadb
+CMD ["mysqld"]
