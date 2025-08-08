@@ -7,4 +7,4 @@ FROM alphine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da8
 # for alpine using the no cache option
 # first command done after finishing run
 RUN apk add --no-cache mariadb
-CMD ["mysqld"]
+CMD ["mysqld", --datadir=/var/db]

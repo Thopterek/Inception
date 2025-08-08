@@ -17,6 +17,8 @@ services:
     volumes:
       - mariadb:/var/db
     command: --datadir=/var/db
+    # always restart if container stops
+    restart: always
 
 volumes:
   mariadb:
