@@ -26,6 +26,14 @@ services:
     env_file:
       - path: ./.env
         required: true
+    # adding the part to do a healthcheck
+    # as per later on in the dependencies
+    healthcheck: 
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   # -----------------------------------
   # second service that I am setting up
   # -----------------------------------
@@ -71,7 +79,9 @@ services:
     # exposing the port of access
     ports:
       - "443:443"
-
+# -----------------------
+# persistent data storage
+# -----------------------
 volumes:
   mariadb:
     name: mariadb
@@ -97,7 +107,9 @@ volumes:
       device: "/home/ndziadzi/data/wordpress"
       o: bind
       type: none
-
+# ------------------------
+# establishing connections
+# ------------------------
 networks:
   inception:
     name: inception

@@ -1,4 +1,26 @@
 # same pinned image as for the db
-FROM alphine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
-RUN
+FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+# php84 is the base for all of the other packages related to PHP
+# php84-fpm adds process manager for NGINX to connect to
+# php84-mysqli allows for connection between the database
+# json is as per name, parsing of json files
+# curl is used for HTTP requests on the side of WordPress
+# mbstring allows for the UTF-8 which is standard in html docs
+# exif used by WordPress for auto-rotating of images
+# xml allows for WordPress imports
+# dom is the standard for working with HTML documents (like in js)
+# fileinfo to allow for the file uploads
+# zip is zip
+RUN apk add --no-cache php84 \
+	php84-fpm \
+	php84-mysqli \
+	php84-json \
+	php84-curl \
+	php84-mbstring \
+	php84-exif \
+	php84-xml \
+	php84-dom \
+	php84-fileinfo \
+	php84-zip
+
 CMD
