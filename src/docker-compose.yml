@@ -1,3 +1,6 @@
+# ----------------
+# all the services
+# ----------------
 services:
   mariadb:
     # first setting the directory path
@@ -18,7 +21,56 @@ services:
       - mariadb:/var/db
     command: --datadir=/var/db
     # always restart if container stops
+    # the env file to be used by services
     restart: always
+    env_file:
+      - path: ./.env
+        required: true
+  # -----------------------------------
+  # second service that I am setting up
+  # -----------------------------------
+  wordpress:
+    build:
+      context: ./req/wordpress
+      dockerfile: Dockerfile_wp
+    image: wordpress
+    container_name: wordpress
+    networks:
+      - inception
+    volumes:
+      - wordpress:/var/www/html
+    restart: always
+    env_file:
+      - path: ./.env
+        required: true
+    # new part of the service setup
+    # controlling order of startup
+    # running extra healthcheck
+    # without it just checks if started
+    depends_on:
+      mariadb:
+        condition: service_healthy
+  # -----------------------------------
+  # combining with nginx the above ones
+  # -----------------------------------
+  nginx:
+    build:
+      context: ./req/nginx
+      dockerfile: Dockerfile_nginx
+    image: nginx
+    container_name: nginx
+    networks:
+      - inception
+    restart: always
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    volumes:
+      - wordpress:/var/www/html
+    # setting up the communication
+    # exposing the port of access
+    ports:
+      - "443:443"
 
 volumes:
   mariadb:
@@ -34,7 +86,17 @@ volumes:
       device: "/home/ndziadzi/data/mariadb"
       o: bind
       type: none
-
+  # ---------------------------
+  # second volume for wordpress
+  # ---------------------------
+  wordpress:
+    name: wordpress
+    driver: local
+    external: false
+    driver_opts:
+      device: "/home/ndziadzi/data/wordpress"
+      o: bind
+      type: none
 
 networks:
   inception:
