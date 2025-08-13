@@ -1,3 +1,5 @@
+# specify the version to use network and services
+version: 3
 # ----------------
 # all the services
 # ----------------
