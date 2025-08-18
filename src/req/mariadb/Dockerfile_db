@@ -4,8 +4,20 @@
 # the above version is the latest
 # below is the correct to be used
 FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+
+# for not working directory
+# where the script is located
+WORKDIR /etc/mariadb
+
 # for alpine using the no cache option
 # first command done after finishing run
 RUN apk update && apk add --no-cache mariadb
 
-CMD ["mysqld"]
+# copy the script into the container
+COPY ./script.sh /etc/mariadb
+
+# add the permissions to execute
+RUN  chmod +x /etc/mariadb/script.sh
+
+# specifies the command and command to be run
+ENTRYPOINT ["./script.sh"]
