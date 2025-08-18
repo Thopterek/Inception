@@ -1,5 +1,5 @@
 # specify the version to use network and services
-version: 3
+version: "3"
 # ----------------
 # all the services
 # ----------------
@@ -19,9 +19,9 @@ services:
     # changing the default directory
     # rather than using /var/lib/mysql
     # command is to set that path for db
+    # redone to the base because of problems
     volumes:
-      - mariadb:/var/db
-    command: --datadir=/var/db
+      - mariadb:/var/lib/mysql
     # always restart if container stops
     # the env file to be used by services
     restart: always
@@ -81,6 +81,12 @@ services:
     # exposing the port of access
     ports:
       - "443:443"
+    healthcheck:
+      test: ["CMD"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
 # -----------------------
 # persistent data storage
 # -----------------------

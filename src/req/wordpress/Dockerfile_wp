@@ -11,16 +11,17 @@ FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80
 # dom is the standard for working with HTML documents (like in js)
 # fileinfo to allow for the file uploads
 # zip is zip
-RUN apk add --no-cache php84 \
-	php84-fpm \
-	php84-mysqli \
-	php84-json \
-	php84-curl \
-	php84-mbstring \
-	php84-exif \
-	php84-xml \
-	php84-dom \
-	php84-fileinfo \
-	php84-zip
+RUN apk update && apk add --no-cache php84 \
+	php84-fpm
+# -F to run in the background and ignore daemonize
+CMD ["pkp-fpm8.4", "-F"]
 
-CMD
+# php84-mysqli \
+# php84-json \
+# php84-curl \
+# php84-mbstring \
+# php84-exif \
+# php84-xml \
+# php84-dom \
+# php84-fileinfo \
+# php84-zip
