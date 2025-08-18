@@ -1,5 +1,6 @@
 # specify the version to use network and services
-version: "3"
+# its obsolete for this version of docker
+# version: "3"
 # ----------------
 # all the services
 # ----------------
@@ -31,9 +32,9 @@ services:
     # adding the part to do a healthcheck
     # as per later on in the dependencies
     healthcheck: 
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD"]
       interval: 10s
-      timeout: 5s
+      timeout: 15s
       retries: 5
       start_period: 10s
   # -----------------------------------
@@ -60,6 +61,12 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
   # -----------------------------------
   # combining with nginx the above ones
   # -----------------------------------
@@ -81,12 +88,6 @@ services:
     # exposing the port of access
     ports:
       - "443:443"
-    healthcheck:
-      test: ["CMD"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-      start_period: 5s
 # -----------------------
 # persistent data storage
 # -----------------------
