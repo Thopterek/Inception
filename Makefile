@@ -8,4 +8,13 @@ up:
 down:
 	$(DC) down
 
-.PHONY: up down
+logs:
+	$(DC) logs -f
+
+clean:
+	$(DC) down -v --remove-orphans
+	rm -rf /home/ndziadzi/data
+	docker system prune --volumes -af
+	
+
+.PHONY: up down logs clean

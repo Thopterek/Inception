@@ -1,3 +1,18 @@
+# pinned image as per the rest
 FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
-RUN apk update && apk add nginx
-CMD ["nginx", "-g", "daemon off;"]
+
+# base of the things to ad 
+RUN apk update && apk --no-cache add nginx \
+	openssl
+
+# create folders to be used by script
+RUN mkdir -p /etc/nginx/ssl
+
+# as before copy of script
+COPY ./script.sh /script.sh
+
+# standard procedure
+RUN chmod +x ./script.sh
+
+# thing to be run at the end
+ENTRYPOINT ["/script.sh"]

@@ -1,5 +1,6 @@
 # same pinned image as for the db
 FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+
 # php84 is the base for all of the other packages related to PHP
 # php84-fpm adds process manager for NGINX to connect to
 # php84-mysqli allows for connection between the database
@@ -12,9 +13,23 @@ FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80
 # fileinfo to allow for the file uploads
 # zip is zip
 RUN apk update && apk add --no-cache php84 \
-	php84-fpm
-# -F to run in the background and ignore daemonize
-CMD ["pkp-fpm8.4", "-F"]
+	php84-fpm \
+	curl \
+	bash \
+	mariadb-client
+
+# create folders to be used in the script
+RUN mkdir -p /run/php && mkdir -p /var/www/html
+
+# copy the script into the container
+COPY ./script.sh /script.sh
+
+# allowing to execute the script
+RUN chmod +x /script.sh
+
+# this time CMD but it doesn't matter in this case
+# same as entrypoint in this use case
+CMD ["/script.sh"]
 
 # php84-mysqli \
 # php84-json \
