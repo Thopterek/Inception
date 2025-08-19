@@ -13,7 +13,7 @@ services:
       dockerfile: Dockerfile_db
     # tagging the image as mariadb
     # and setting the container name
-    image: mariadb
+    image: mariadb:my_tag
     container_name: mariadb
     networks:
       - inception
@@ -29,14 +29,17 @@ services:
     env_file:
       - path: ./.env
         required: true
+    ports:
+      - "3306:3306"
     # adding the part to do a healthcheck
     # as per later on in the dependencies
-    healthcheck: 
-      test: mysqladmin ping -h localhost -u${MYSQL_USER} -p${MYSQL_PASS} | grep alive
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
+    # for now commented out needs to be reworked
+    # healthcheck: 
+    #   test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "--password=${MARIADB_ROOT_PASSWORD}"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 20s
   # -----------------------------------
   # second service that I am setting up
   # -----------------------------------
@@ -44,7 +47,7 @@ services:
     build:
       context: ./req/wordpress
       dockerfile: Dockerfile_wp
-    image: wordpress
+    image: wordpress:my_tag
     container_name: wordpress
     networks:
       - inception
@@ -60,13 +63,14 @@ services:
     # without it just checks if started
     depends_on:
       mariadb:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-      start_period: 5s
+        condition: service_started
+    # should be reworked later
+    # healthcheck:
+    #   test: ["CMD"]
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 10
+    #   start_period: 5s
   # -----------------------------------
   # combining with nginx the above ones
   # -----------------------------------
@@ -74,14 +78,17 @@ services:
     build:
       context: ./req/nginx
       dockerfile: Dockerfile_nginx
-    image: nginx
+    image: nginx:my_tag
     container_name: nginx
     networks:
       - inception
     restart: always
+    env_file:
+      - path: ./.env
+        required: true
     depends_on:
       wordpress:
-        condition: service_healthy
+        condition: service_started
     volumes:
       - wordpress:/var/www/html
     # setting up the communication
@@ -122,3 +129,4 @@ volumes:
 networks:
   inception:
     name: inception
+    driver: bridge
