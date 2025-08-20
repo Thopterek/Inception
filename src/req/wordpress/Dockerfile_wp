@@ -14,9 +14,23 @@ FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80
 # zip is zip
 RUN apk update && apk add --no-cache php84 \
 	php84-fpm \
+	php84-mysqli \
+	php84-curl \
+	php84-phar \
+	php84-openssl \
 	curl \
 	bash \
 	mariadb-client
+
+# setting the memory limit for PHP CLI used by wp-cli
+RUN sed -i 's/^memory_limit = .*/memory_limit = 256M/' /etc/php84/php.ini
+
+# trying out to create a simlink so WP-CLI works
+RUN ln -s /usr/bin/php84 /usr/bin/php
+
+RUN curl -o /usr/local/bin/wp \
+	https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	chmod +x /usr/local/bin/wp
 
 # create folders to be used in the script
 RUN mkdir -p /run/php && mkdir -p /var/www/html
@@ -31,9 +45,7 @@ RUN chmod +x /script.sh
 # same as entrypoint in this use case
 CMD ["/script.sh"]
 
-# php84-mysqli \
 # php84-json \
-# php84-curl \
 # php84-mbstring \
 # php84-exif \
 # php84-xml \
