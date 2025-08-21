@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # exit if non 0 value
 set -e
@@ -42,6 +42,10 @@ FILE=/etc/php84/php-fpm.d/www.conf
 # changing the PHP-FPM socket to use port 9000
 sed -i 's|^listen =.*|listen = 9000|' "$FILE"
 
+echo "---------------------------------------------"
+echo "do we get proper user $MYSQL_USER"
+echo "and what about password? $MYSQL_PASS"
+echo "---------------------------------------------"
 # ------------------------------------------
 # seems like something is wrong at this part
 # adding it for testing right now again
@@ -49,12 +53,12 @@ sed -i 's|^listen =.*|listen = 9000|' "$FILE"
 # checking the MariaDB if its ready
 # trying up to 10 times every 2 seconds
 # most likely to be removed if healthcheck works
-for i in {1..10}; do
-	if mariadb -h mariadb -p 3306 -u "${MYSQL_USER}" \
+for i in $(seq 1 10); do
+	if mariadb -h mariadb -u "${MYSQL_USER}" \
 		-p"${MYSQL_PASS}" -e "SELECT 1" &>/dev/null; then
 		break
 	else
-		echo "we wait if MariaDB is ready (${i}/10)"
+		echo "we wait if MariaDB is ready ($i/10)"
 		sleep 2
 	fi
 done
@@ -64,19 +68,18 @@ if [ ! -f index.php ]; then
 	echo "Downloading WordPress" && \
 	wp core download --allow-root
 fi
-echo "Was the last command succefull -> $?"
 
 # make a WordPress config file if it doesn't exist
 # adding a wraper to try and retry the connection
 # before fully exiting the script
-for i in {1..10}; do
+for i in $(seq 1 10); do
 	if [ ! -f wp-config.php ]; then
 		echo "Creating a wp-config file tried ${i}/10"
 		if wp config create \
 			--dbname="${MYSQL_DATABASE}" \
 			--dbuser="${MYSQL_USER}" --dbpass="${MYSQL_PASS}" \
 			--dbhost="mariadb:3306" --allow-root; then
-			echo "WE DID IT"
+			echo "WE DID IT WP CONFIG CREATED"
 			break
 		else
 			echo "we are retrying the config"
@@ -87,7 +90,6 @@ for i in {1..10}; do
 		break
 	fi
 done
-echo "Was the last command succefull -> $?"
 
 # install wordpress if its not there
 # fillout all of the informations about it
@@ -100,7 +102,6 @@ if ! wp core is-installed --allow-root; then
 		--admin_email="${WP_ADMIN_EMAIL}" --skip-email --allow-root
 		# 2> >(grep -v '/usr/sbin/sendmail: not found' >&2)
 fi
-echo "Was the last command succefull -> $?"
 
 # create a user if he doesn't exist
 if ! wp user get "${WP_USER}" --allow-root &>/dev/null; then
@@ -108,7 +109,6 @@ if ! wp user get "${WP_USER}" --allow-root &>/dev/null; then
 	wp user create "${WP_USER}" "${WP_USER_EMAIL}" \
 		--user_pass="${WP_USER_PASS}" --allow-root
 fi
-echo "Was the last command succefull -> $?"
 
 # setup permissions for the www-data
 chown -R www-data:www-data /var/www/html

@@ -10,7 +10,7 @@ services:
     # then specify my own name for Dockerfile
     build:
       context: ./req/mariadb
-      dockerfile: Dockerfile_db
+      dockerfile: Dockerfile
     # tagging the image as mariadb
     # and setting the container name
     image: mariadb:my_tag
@@ -46,7 +46,7 @@ services:
   wordpress:
     build:
       context: ./req/wordpress
-      dockerfile: Dockerfile_wp
+      dockerfile: Dockerfile
     image: wordpress:my_tag
     container_name: wordpress
     networks:

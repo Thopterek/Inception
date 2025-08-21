@@ -12,7 +12,7 @@ WORKDIR /etc/mariadb
 # for alpine using the no cache option
 # first command done after finishing run
 # mariadb-client for commands used in script
-RUN apk update && apk add --no-cache mariadb \
+RUN apk update && apk upgrade && apk add --no-cache mariadb \
 	mariadb-client
 
 # copy the script into the container

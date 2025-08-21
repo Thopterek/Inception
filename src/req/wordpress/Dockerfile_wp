@@ -18,8 +18,17 @@ RUN apk update && apk add --no-cache php84 \
 	php84-curl \
 	php84-phar \
 	php84-openssl \
+	php84-json \
+	php84-mbstring \
+	php84-exif \
+	php84-xml \
+	php84-dom \
+	php84-fileinfo \
+	php84-tokenizer \
+	php84-session \
+	php84-simplexml \
+	php84-zip \
 	curl \
-	bash \
 	mariadb-client
 
 # setting the memory limit for PHP CLI used by wp-cli
@@ -43,12 +52,4 @@ RUN chmod +x /script.sh
 
 # this time CMD but it doesn't matter in this case
 # same as entrypoint in this use case
-CMD ["/script.sh"]
-
-# php84-json \
-# php84-mbstring \
-# php84-exif \
-# php84-xml \
-# php84-dom \
-# php84-fileinfo \
-# php84-zip
+ENTRYPOINT ["/bin/sh", "/script.sh"]
