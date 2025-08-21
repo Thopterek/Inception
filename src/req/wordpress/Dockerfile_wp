@@ -1,6 +1,14 @@
 # same pinned image as for the db
-FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+# --------------------------------------------
+# Rather than having this horryfic line below:
+# FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+# ------------------------------------------
+FROM debian:bullseye
 
+# ------------------------------------------------------------
+# Way too much explanation about each package and most likely
+# for alpine to work flawlessly you need to manage even more
+# --------------------------------------------------------------
 # php84 is the base for all of the other packages related to PHP
 # php84-fpm adds process manager for NGINX to connect to
 # php84-mysqli allows for connection between the database
@@ -12,37 +20,56 @@ FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80
 # dom is the standard for working with HTML documents (like in js)
 # fileinfo to allow for the file uploads
 # zip is zip
-RUN apk update && apk add --no-cache php84 \
-	php84-fpm \
-	php84-mysqli \
-	php84-curl \
-	php84-phar \
-	php84-openssl \
-	php84-json \
-	php84-mbstring \
-	php84-exif \
-	php84-xml \
-	php84-dom \
-	php84-fileinfo \
-	php84-tokenizer \
-	php84-session \
-	php84-simplexml \
-	php84-zip \
-	curl \
-	mariadb-client
+# RUN apk update && apk add --no-cache php84 \
+# 	php84-fpm \
+# 	php84-mysqli \
+# 	php84-curl \
+# 	php84-phar \
+# 	php84-openssl \
+# 	php84-json \
+# 	php84-mbstring \
+# 	php84-exif \
+# 	php84-xml \
+# 	php84-dom \
+# 	php84-fileinfo \
+# 	php84-tokenizer \
+# 	php84-session \
+# 	php84-simplexml \
+# 	php84-zip \
+# 	curl \
+# 	mariadb-client
+# ----------------
+# Replaced with:
+# --------------
+RUN apt-get update -y && \
+	apt-get upgrade -y && \
+	apt-get install -y curl \
+	php \
+	php-mysql \
+	php7.4-fpm \
+	mariadb-client && \
+	rm -rf /var/lib/apt/lists/*
 
+# --------------------------------------------------
+# Memory limits are not really a problem with Debian
+# same goes about the simlinks below so we can skip it
+# ----------------------------------------------------
 # setting the memory limit for PHP CLI used by wp-cli
-RUN sed -i 's/^memory_limit = .*/memory_limit = 256M/' /etc/php84/php.ini
+# RUN sed -i 's/^memory_limit = .*/memory_limit = 256M/' /etc/php84/php.ini
 
 # trying out to create a simlink so WP-CLI works
-RUN ln -s /usr/bin/php84 /usr/bin/php
+# RUN ln -s /usr/bin/php84 /usr/bin/php
 
-RUN curl -o /usr/local/bin/wp \
-	https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-	chmod +x /usr/local/bin/wp
+# RUN curl -o /usr/local/bin/wp \
+#	https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+#	chmod +x /usr/local/bin/wp
 
+# --------------------------------------
+# This part we will see about but idk
+# I feel like I tried to debug not existing problem
+# -------------------------------------------------
 # create folders to be used in the script
-RUN mkdir -p /run/php && mkdir -p /var/www/html
+# RUN mkdir -p /run/php && mkdir -p /var/www/html
 
 # copy the script into the container
 COPY ./script.sh /script.sh
@@ -52,4 +79,4 @@ RUN chmod +x /script.sh
 
 # this time CMD but it doesn't matter in this case
 # same as entrypoint in this use case
-ENTRYPOINT ["/bin/sh", "/script.sh"]
+ENTRYPOINT ["/script.sh"]
