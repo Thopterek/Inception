@@ -3,6 +3,9 @@
 # exit != 0 -> stop
 set -e
 
+# directory used for the key and chain
+mkdir -p /etc/nginx/ssl
+
 # generating a self-signed SSL certificate
 # no passphrase on the private key and save it
 # same thing to save certificate and add details
@@ -33,7 +36,7 @@ EOF
 
 # create a smybolic link (shortcut to another file)
 # -sf overwrites the link if needed
-ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enbled/default
+ln -sf "/etc/nginx/sites-available/default" "/etc/nginx/sites-enabled/default"
 
 # a safety test before starting nginx
 nginx -t

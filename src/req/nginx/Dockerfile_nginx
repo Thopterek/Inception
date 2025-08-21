@@ -1,12 +1,23 @@
 # pinned image as per the rest
-FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+# FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+# -----------------------------------
+# AND JUST LIKE FOR THE REST REPLACED
+# -----------------------------------
+FROM debian:bullseye
 
-# base of the things to ad 
-RUN apk update && apk --no-cache add nginx \
-	openssl
-
-# create folders to be used by script
-RUN mkdir -p /etc/nginx/ssl
+# base of the things to add
+# --------------------------------------
+# its now bigger than the apline version
+# but it also wasn't really finished
+# ----------------------------------
+# RUN apk update && apk --no-cache add nginx \
+# 	openssl
+RUN apt-get update -y && \
+	apt-get install -y nginx \
+	openssl \
+	sudo \
+	curl && \
+	rm -rf /var/lib/apt/lists/* /etc/nginx/sites-enabled/*
 
 # as before copy of script
 COPY ./script.sh /script.sh

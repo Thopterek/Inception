@@ -3,7 +3,7 @@
 # FROM alpine@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
 # the above version is the latest
 # below is the correct to be used
-FROM alpine@sha256:b6a6be0ff92ab6db8acd94f5d1b7a6c2f0f5d10ce3c24af348d333ac6da80685
+FROM debian:bullseye
 
 # for not working directory
 # where the script is located
@@ -12,8 +12,15 @@ WORKDIR /etc/mariadb
 # for alpine using the no cache option
 # first command done after finishing run
 # mariadb-client for commands used in script
-RUN apk update && apk upgrade && apk add --no-cache mariadb \
-	mariadb-client
+# -----------------------------------------
+# Rather than apk apt so need to clean with
+# rm -rf but other that that similiar to old
+# ------------------------------------------
+RUN apt-get update && apt-get install -y \
+	mariadb-server \
+	mariadb-client \
+	openssl && \
+	rm -rf /var/lib/apt/lists/*
 
 # copy the script into the container
 COPY ./script.sh /etc/mariadb
