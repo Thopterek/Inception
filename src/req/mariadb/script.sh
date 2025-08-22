@@ -97,7 +97,7 @@ EOF
 # once again simpler version is possible thankfully
 # rather than -> /usr/bin/mariadb-admin we got below one
 # ------------------------------------------------------ 
-mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -u root
+mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -u root -p${MARIADB_ROOT_PASSWORD}
 
 # DEBUG FOR FINISHING THE MARIADB SETUP
 echo "---------------------------------------"
