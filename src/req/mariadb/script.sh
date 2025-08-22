@@ -82,9 +82,9 @@ echo "then grant all privilages to him"
 # flushing the privileges mean that changes take effect
 mysql -u root <<EOF
 CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASS}';
 GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 EOF
 
@@ -96,8 +96,10 @@ EOF
 # ------------------------------------------------------
 # once again simpler version is possible thankfully
 # rather than -> /usr/bin/mariadb-admin we got below one
-# ------------------------------------------------------ 
-mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -u root -p${MARIADB_ROOT_PASSWORD}
+# ------------------------------------------------------
+echo "ARE WE GOING TO SHUT DOWN"
+
+mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -u root -p${MARIADB_ROOT_PASSWORD
 
 # DEBUG FOR FINISHING THE MARIADB SETUP
 echo "---------------------------------------"
