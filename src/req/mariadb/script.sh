@@ -75,17 +75,25 @@ done
 
 echo "we want to use database name -> $MYSQL_DATABASE"
 echo "user -> $MYSQL_USER with password -> $MYSQL_PASS"
+echo "did we get the password -> $MARIADB_ROOT_PASSWORD"
 echo "then grant all privilages to him"
 
 # creating of actual db and the user through SQL syntax
 # most of them are self explanatory through naming
 # flushing the privileges mean that changes take effect
-mysql -u root <<EOF
+mysql -u root -p${MARIADB_ROOT_PASSWORD} <<EOF
 CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASS}';
 GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
+EOF
+
+echo "---------------------------------------"
+echo "did we go through first part of mysql?"
+echo "---------------------------------------"
+
+mysql -u root -p${MARIADB_ROOT_PASSWORD} <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
 EOF
 
 # echo "what about mysql -u root exit value $?"
@@ -99,7 +107,7 @@ EOF
 # ------------------------------------------------------
 echo "ARE WE GOING TO SHUT DOWN"
 
-mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -u root -p${MARIADB_ROOT_PASSWORD
+mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -u root -p${MARIADB_ROOT_PASSWORD}
 
 # DEBUG FOR FINISHING THE MARIADB SETUP
 echo "---------------------------------------"
